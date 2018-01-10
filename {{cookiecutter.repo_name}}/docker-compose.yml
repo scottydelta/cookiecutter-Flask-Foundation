@@ -1,0 +1,20 @@
+version: "3.3"
+
+services:
+  web:
+    container_name: {{cookiecutter.repo_name}}
+    environment:
+      - {{cookiecutter.repo_name|upper}}_ENV=dev
+    stdin_open: true
+    tty: true
+    build: .
+    image: nginx-gunicorn-flask:latest
+    volumes:
+      - ./:/deploy/app
+      - ./deployment_configs/nginx.conf:/etc/nginx/sites-available/nginx.conf
+      - ./deployment_configs/{{cookiecutter.repo_name}}_supervisor.conf:/etc/supervisor/conf.d/{{cookiecutter.repo_name}}_supervisor.conf
+      - ./deployment_configs/supervisord.conf:/etc/supervisor/conf.d/supervisord.conf
+    ports:
+      - "80:80"
+    command: '/usr/bin/supervisord'
+
